@@ -28,9 +28,10 @@ def save_index(data_dir: Path, index: dict) -> None:
 
 
 def list_models(data_dir: Path) -> list[dict]:
-    """Return a list of installed model metadata dicts."""
+    """Return a list of installed model metadata dicts, sorted by name."""
     index = load_index(data_dir)
-    return list(index.values())
+    # Sort by name so output is predictable regardless of insertion order
+    return sorted(index.values(), key=lambda m: m.get("name", ""))
 
 
 def get_model(data_dir: Path, name: str) -> Optional[dict]:
