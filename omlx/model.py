@@ -79,3 +79,14 @@ def ensure_model_dir(data_dir: Path, name: str) -> Path:
     path = model_path(data_dir, name)
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def find_models_by_tag(data_dir: Path, tag: str) -> list[dict]:
+    """Return all installed models that include the given tag in their metadata.
+
+    Useful for filtering models by task type, e.g. 'classification' or 'nlp'.
+    """
+    return [
+        m for m in list_models(data_dir)
+        if tag in m.get("tags", [])
+    ]
