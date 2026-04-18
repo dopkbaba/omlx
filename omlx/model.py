@@ -86,9 +86,11 @@ def find_models_by_tag(data_dir: Path, tag: str) -> list[dict]:
 
     Useful for filtering models by task type, e.g. 'classification' or 'nlp'.
     Matching is case-insensitive so 'NLP' and 'nlp' both work.
+    Tags are expected under the 'tags' key as a list of strings.
     """
     tag_lower = tag.lower()
     return [
         m for m in list_models(data_dir)
-        if tag_lower in [t.lower() for t in m.get("tags", [])]
+        if tag_lower in [t.lower()
+                         for t in m.get("tags", [])]
     ]
