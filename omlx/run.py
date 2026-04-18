@@ -34,8 +34,8 @@ def _find_llama_cpp() -> str | None:
 def run_model(
     name: str,
     prompt: str | None = None,
-    n_ctx: int = 2048,
-    n_predict: int = 512,
+    n_ctx: int = 4096,
+    n_predict: int = 1024,
     interactive: bool = False,
     extra_args: list[str] | None = None,
 ) -> int:
