@@ -60,6 +60,10 @@ def remove_model(data_dir: Path, name: str) -> bool:
     model_dir = data_dir / name
     if model_dir.exists() and model_dir.is_dir():
         shutil.rmtree(model_dir)
+    else:
+        # Warn if the index referenced a model whose directory is already missing
+        import warnings
+        warnings.warn(f"Model '{name}' was in the index but its directory was not found.")
 
     save_index(data_dir, index)
     return True
