@@ -57,12 +57,14 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
         print(f"Model '{full_name}' is already present.")
         return True
 
+    # Allow env var override; fall back to default registry
     registry_url = registry_url or os.environ.get("OMLX_REGISTRY_URL", DEFAULT_REGISTRY_URL)
 
     # Fetch registry to resolve model URL
     try:
         import json
-        with urllib.request.urlopen(registry_url, timeout=10) as resp:
+        # Increased timeout from 10 to 30s — default was too aggressive on slow connections
+        with urllib.request.urlopen(registry_url, timeout=30) as resp:
             registry = json.loads(resp.read().decode())
     except (URLError, HTTPError) as e:
         print(f"Error: Could not fetch registry from {registry_url}: {e}", file=sys.stderr)
@@ -85,22 +87,3 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
     print(f"Pulling '{full_name}' from {url}")
     try:
         urllib.request.urlretrieve(url, dest_path, reporthook=_progress_hook)
-        print()  # newline after progress bar
-    except (URLError, HTTPError) as e:
-        print(f"\nError: Download failed: {e}", file=sys.stderr)
-        if os.path.exists(dest_path):
-            os.remove(dest_path)
-        return False
-
-    if expected_sha256:
-        print("Verifying checksum...", end=" ")
-        if not _verify_sha256(dest_path, expected_sha256):
-            print("FAILED", file=sys.stderr)
-            os.remove(dest_path)
-            print("Error: Checksum mismatch. File removed.", file=sys.stderr)
-            return False
-        print("OK")
-
-    register_model(full_name, dest_path, meta=entry.get("meta", {}))
-    print(f"Model '{full_name}' pulled successfully.")
-    return True
