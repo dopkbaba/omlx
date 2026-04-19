@@ -89,10 +89,11 @@ def find_models_by_tag(data_dir: Path, tag: str) -> list[dict]:
     Tags are expected under the 'tags' key as a list of strings.
     Results are sorted by name for consistent output.
     """
+    index = load_index(data_dir)
     tag_lower = tag.lower()
     matches = [
-        m
-        for m in list_models(data_dir)
-        if tag_lower in [t.lower() for t in m.get("tags", [])]
+        m for m in index.values()
+        # check each tag in the list; skip models with no tags key
+        if any(t.lower() == tag_lower for t in m.get("tags", []))
     ]
-    return matches
+    return sorted(matches, key=lambda m: m.get("name", ""))
