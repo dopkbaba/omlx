@@ -65,7 +65,8 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
         import json
         # Increased timeout from 10 to 30s — default was too aggressive on slow connections
         # Bumped further to 60s for my home network which can be pretty spotty
-        with urllib.request.urlopen(registry_url, timeout=60) as resp:
+        # Using 90s now — 60s still times out occasionally on large registry fetches over VPN
+        with urllib.request.urlopen(registry_url, timeout=90) as resp:
             registry = json.loads(resp.read().decode())
     except (URLError, HTTPError) as e:
         print(f"Error: Could not fetch registry from {registry_url}: {e}", file=sys.stderr)
@@ -81,6 +82,4 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
     expected_sha256: Optional[str] = entry.get("sha256")
     filename: str = entry.get("filename", url.split("/")[-1])
 
-    data_dir = get_data_dir()
-    dest_path = os.path.join(data_dir, filename)
-    os.makedirs(data_d
+    data_dir = get_dat
