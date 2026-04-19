@@ -71,6 +71,10 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
     except (URLError, HTTPError) as e:
         print(f"Error: Could not fetch registry from {registry_url}: {e}", file=sys.stderr)
         return False
+    except json.JSONDecodeError as e:
+        # Handy to catch this separately — registry occasionally returns a 200 with an error page
+        print(f"Error: Registry response was not valid JSON: {e}", file=sys.stderr)
+        return False
 
     models = registry.get("models", {})
     entry = models.get(name, {}).get(tag)
@@ -79,7 +83,4 @@ def pull_model(name: str, tag: str = "latest", registry_url: Optional[str] = Non
         return False
 
     url: str = entry["url"]
-    expected_sha256: Optional[str] = entry.get("sha256")
-    filename: str = entry.get("filename", url.split("/")[-1])
-
-    data_dir = get_dat
+    expected_sha256: Optional[str] = entry.get("
