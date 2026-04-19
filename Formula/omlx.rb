@@ -62,5 +62,7 @@ class Omlx < Formula
 
   test do
     assert_match version.to_s, shell_output("#{bin}/omlx --version")
+    # Sanity check that the serve subcommand is present
+    assert_match "serve", shell_output("#{bin}/omlx --help")
   end
 end
