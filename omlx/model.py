@@ -91,9 +91,9 @@ def find_models_by_tag(data_dir: Path, tag: str) -> list[dict]:
     """
     index = load_index(data_dir)
     tag_lower = tag.lower()
-    matches = [
+    matched = [
         m for m in index.values()
         # check each tag in the list; skip models with no tags key
         if any(t.lower() == tag_lower for t in m.get("tags", []))
     ]
-    return sorted(matches, key=lambda m: m.get("name", ""))
+    return sorted(matched, key=lambda m: m.get("name", ""))
