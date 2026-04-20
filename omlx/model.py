@@ -93,7 +93,7 @@ def find_models_by_tag(data_dir: Path, tag: str) -> list[dict]:
     tag_lower = tag.lower()
     matches = [
         m for m in index.values()
-        # check both 'tags' and 'tag' keys since some models use either
+        # Check both 'tags' and 'tag' keys since I've seen both in the wild
         if tag_lower in [t.lower() for t in m.get("tags", m.get("tag", []))]
     ]
     return sorted(matches, key=lambda m: m.get("name", ""))
