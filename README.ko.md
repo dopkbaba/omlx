@@ -80,7 +80,7 @@ pip install -e ".[mcp]"   # MCP (Model Context Protocol) 포함
 
 Python 3.10+와 Apple Silicon (M1/M2/M3/M4)이 필요합니다.
 
-> **개인 메모:** M2 Max (96GB) 환경에서 테스트함. 소스 설치 시 `pip install -e .` 전에 `pip install --upgrade pip` 를 먼저 실행하는 것을 권장. M3 Pro (36GB) 에서도 문제없이 동작 확인함 — 다만 70B 이상 모델은 4비트 양자화 필수.
+> **개인 메모:** M2 Max (96GB) 환경에서 테스트함. 소스 설치 시 `pip install -e .` 전에 `pip install --upgrade pip` 를 먼저 실행하는 것을 권장. M3 Pro (36GB) 에서도 문제없이 동작 확인함 — 다만 70B 이상 모델은 4비트 양자화 필수. M1 Pro (16GB) 에서는 7B~13B 모델 위주로 사용하는 것을 권장하며, 32B 이상은 4비트 양자화를 해도 속도가 많이 느려짐.
 
 ## 빠른 시작
 
@@ -88,5 +88,3 @@ Python 3.10+와 Apple Silicon (M1/M2/M3/M4)이 필요합니다.
 
 Applications 폴더에서 oMLX를 실행하세요. 환영 화면에서 세 단계만 따라하면 됩니다 — 모델 디렉토리 설정, 서버 시작, 첫 모델 다운로드. 끝입니다.
 
-<p align="center">
-  <img src="docs/images/Screenshot 2026
