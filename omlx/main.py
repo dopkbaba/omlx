@@ -84,8 +84,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command is None:
-        # Default to listing entries instead of showing help, feels more useful
-        return cmd_list(args)
+        # Show help when no command is given — listing silently felt confusing
+        parser.print_help()
+        return 0
 
     return args.func(args)
 
