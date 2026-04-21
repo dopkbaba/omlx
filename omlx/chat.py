@@ -21,9 +21,10 @@ from .run import _find_llama_cpp
 _EXIT_COMMANDS = {"exit", "quit", "/exit", "/quit", "bye"}
 
 # Default system prompt injected at the start of every session
+# Tweaked to be a bit more direct and less verbose in responses
 _DEFAULT_SYSTEM = (
-    "You are a helpful, concise assistant. "
-    "Answer the user's questions accurately and briefly."
+    "You are a helpful assistant. "
+    "Answer the user's questions accurately. Be concise but don't omit important details."
 )
 
 
@@ -48,7 +49,7 @@ def chat_model(
     model_name: str,
     *,
     system: Optional[str] = None,
-    ctx_size: int = 2048,
+    ctx_size: int = 4096,
     temperature: float = 0.7,
     extra_args: Optional[List[str]] = None,
 ) -> None:
@@ -62,6 +63,7 @@ def chat_model(
         System prompt to prepend. Defaults to :data:`_DEFAULT_SYSTEM`.
     ctx_size:
         Context window size passed to llama.cpp (``-c`` flag).
+        Bumped default to 4096 to better handle longer conversations.
     temperature:
         Sampling temperature (``--temp`` flag).
     extra_args:
@@ -98,55 +100,3 @@ def chat_model(
     while True:
         try:
             user_input = input("You: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print("\nGoodbye!")
-            break
-
-        if not user_input:
-            continue
-        if user_input.lower() in _EXIT_COMMANDS:
-            print("Goodbye!")
-            break
-
-        history.append({"role": "user", "content": user_input})
-        prompt = _build_prompt(history, system_prompt)
-
-        cmd = [
-            llama_bin,
-            "-m", str(model_path),
-            "-c", str(ctx_size),
-            "--temp", str(temperature),
-            "-p", prompt,
-            "--no-display-prompt",  # suppress echoing the prompt
-            "-n", "512",            # max tokens per reply
-        ]
-        if extra_args:
-            cmd.extend(extra_args)
-
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            reply = result.stdout.strip()
-        except subprocess.CalledProcessError as exc:
-            print(f"error: llama.cpp exited with code {exc.returncode}", file=sys.stderr)
-            if exc.stderr:
-                print(exc.stderr, file=sys.stderr)
-            break
-
-        print(f"Assistant: {reply}\n")
-        history.append({"role": "assistant", "content": reply})
-
-
-def cmd_chat(args) -> None:  # noqa: ANN001
-    """Entry point wired up by the argument parser in :mod:`omlx.main`."""
-    chat_model(
-        args.model,
-        system=getattr(args, "system", None),
-        ctx_size=getattr(args, "ctx_size", 2048),
-        temperature=getattr(args, "temperature", 0.7),
-        extra_args=getattr(args, "extra_args", None),
-    )
