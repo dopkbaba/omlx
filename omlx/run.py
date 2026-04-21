@@ -34,8 +34,8 @@ def _find_llama_cpp() -> str | None:
 def run_model(
     name: str,
     prompt: str | None = None,
-    n_ctx: int = 8192,
-    n_predict: int = 2048,
+    n_ctx: int = 4096,
+    n_predict: int = 512,
     interactive: bool = False,
     extra_args: list[str] | None = None,
 ) -> int:
@@ -44,8 +44,10 @@ def run_model(
     Args:
         name: Model name or alias registered in the index.
         prompt: Optional prompt string. If None and not interactive, reads stdin.
-        n_ctx: Context window size. Bumped to 8192 since most modern models support it.
-        n_predict: Max tokens to predict. Increased to 2048 for longer responses.
+        n_ctx: Context window size. Reduced to 4096 to keep memory usage reasonable
+            on my 16 GB machine; override with --ctx-size if you need more.
+        n_predict: Max tokens to predict. Lowered to 512 for snappier responses
+            during quick experiments; bump up for longer generation tasks.
         interactive: Launch in interactive/chat mode.
         extra_args: Additional arguments forwarded to the backend binary.
 
